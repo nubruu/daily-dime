@@ -1,4 +1,3 @@
-```typescript
 import { useState } from 'react';
 import { Moon, Sun, Monitor, LogIn, LogOut } from 'lucide-react';
 import { useStore } from '../store';
@@ -64,7 +63,7 @@ export const Header = () => {
                                 onClick={toggleTheme}
                                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-300 transition-colors"
                                 aria-label="Toggle theme"
-                                title={`Current: ${ preferences.theme } (click to cycle)`}
+                                title={`Current: ${preferences.theme} (click to cycle)`}
                             >
                                 {getThemeIcon()}
                             </button>
@@ -103,4 +102,3 @@ export const Header = () => {
         </>
     );
 };
-```
