@@ -1,0 +1,24 @@
+{
+    "name": "DailyDime - Personal Finance Tracker",
+    "short_name": "DailyDime",
+    "description": "Track your income, expenses, and loans with cloud sync",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#6366f1",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/DailyDime.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/DailyDime.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
