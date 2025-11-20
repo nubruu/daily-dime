@@ -10,15 +10,6 @@ export interface Transaction {
     tags?: string[];
 }
 
-// Category types
-export interface Category {
-    id: string;
-    name: string;
-    type: 'income' | 'expense';
-    color: string;
-    icon: string;
-}
-
 // Loan type for "To Take" feature
 export interface Loan {
     id: string;

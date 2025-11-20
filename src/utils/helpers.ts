@@ -39,11 +39,6 @@ export const generateId = (): string => {
     return crypto.randomUUID();
 };
 
-export const getCategoryIcon = (iconName: string) => {
-    // This will be used with lucide-react icons
-    return iconName;
-};
-
 export const calculatePercentage = (value: number, total: number): number => {
     if (total === 0) return 0;
     return Math.round((value / total) * 100);
