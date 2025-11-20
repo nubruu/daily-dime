@@ -1,4 +1,4 @@
-import { Moon, Sun, LogIn, LogOut } from 'lucide-react';
+import { Moon, Sun, Monitor, LogIn, LogOut } from 'lucide-react';
 import { useStore } from '../store';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -8,15 +8,31 @@ export const Header = () => {
     const navigate = useNavigate();
 
     const toggleTheme = () => {
-        const newTheme = preferences.theme === 'light' ? 'dark' : 'light';
-        updatePreferences({ theme: newTheme });
-        document.documentElement.classList.toggle('dark');
+        const themeOrder: Array<'light' | 'dark' | 'system'> = ['light', 'dark', 'system'];
+        const currentIndex = themeOrder.indexOf(preferences.theme);
+        const nextTheme = themeOrder[(currentIndex + 1) % themeOrder.length];
+        updatePreferences({ theme: nextTheme });
     };
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
-        setUser(null);
-        navigate('/login');
+        const confirmed = window.confirm('Are you sure you want to logout? Your local data will remain, but you will need to login again to sync with the cloud.');
+
+        if (confirmed) {
+            await supabase.auth.signOut();
+            setUser(null);
+            navigate('/login');
+        }
+    };
+
+    const getThemeIcon = () => {
+        switch (preferences.theme) {
+            case 'light':
+                return <Sun className="w-5 h-5" />;
+            case 'dark':
+                return <Moon className="w-5 h-5" />;
+            case 'system':
+                return <Monitor className="w-5 h-5" />;
+        }
     };
 
     return (
@@ -38,12 +54,9 @@ export const Header = () => {
                             onClick={toggleTheme}
                             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-300 transition-colors"
                             aria-label="Toggle theme"
+                            title={`Current: ${preferences.theme} (click to cycle)`}
                         >
-                            {preferences.theme === 'light' ? (
-                                <Moon className="w-5 h-5" />
-                            ) : (
-                                <Sun className="w-5 h-5" />
-                            )}
+                            {getThemeIcon()}
                         </button>
 
                         {user ? (

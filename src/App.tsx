@@ -43,6 +43,39 @@ function App() {
     }
   }, [preferences.currency, updatePreferences]);
 
+  // Handle system theme detection
+  useEffect(() => {
+    const applyTheme = (theme: 'light' | 'dark' | 'system') => {
+      const root = document.documentElement;
+
+      if (theme === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (systemTheme === 'dark') {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+      } else if (theme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    };
+
+    applyTheme(preferences.theme);
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      if (preferences.theme === 'system') {
+        applyTheme('system');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [preferences.theme]);
+
   return (
     <BrowserRouter>
       <Layout>

@@ -25,7 +25,7 @@ export const useStore = create<StoreState>()(
             loans: [],
             preferences: {
                 currency: 'INR',
-                theme: 'light',
+                theme: 'system',
             },
             user: null,
             setUser: (user) => set({ user }),
