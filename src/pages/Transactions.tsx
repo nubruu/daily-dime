@@ -3,12 +3,17 @@ import { useStore } from '../store';
 import { formatCurrency, formatDate } from '../utils/helpers';
 import { Plus, Search, Trash2 } from 'lucide-react';
 import { AddTransactionModal } from '../components/AddTransactionModal';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 export const Transactions = () => {
     const { transactions, preferences, deleteTransaction } = useStore();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
+    const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; id: string | null }>({
+        isOpen: false,
+        id: null,
+    });
 
     // Filtered and sorted transactions
     const filteredTransactions = useMemo(() => {
@@ -22,9 +27,18 @@ export const Transactions = () => {
     }, [transactions, searchTerm, filterType]);
 
     const handleDelete = (id: string) => {
-        if (confirm('Are you sure you want to delete this transaction?')) {
-            deleteTransaction(id);
+        setDeleteConfirm({ isOpen: true, id });
+    };
+
+    const confirmDelete = () => {
+        if (deleteConfirm.id) {
+            deleteTransaction(deleteConfirm.id);
         }
+        setDeleteConfirm({ isOpen: false, id: null });
+    };
+
+    const cancelDelete = () => {
+        setDeleteConfirm({ isOpen: false, id: null });
     };
 
     return (
@@ -154,6 +168,16 @@ export const Transactions = () => {
             <AddTransactionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+            />
+
+            <ConfirmModal
+                isOpen={deleteConfirm.isOpen}
+                title="Delete Transaction"
+                message="Are you sure you want to delete this transaction? This action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
             />
         </div>
     );

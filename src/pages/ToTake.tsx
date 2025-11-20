@@ -4,6 +4,7 @@ import { formatCurrency } from '../utils/helpers';
 import { Plus, Check, Trash2, User, Calendar, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 interface LoanFormData {
     personName: string;
@@ -15,6 +16,13 @@ interface LoanFormData {
 export const ToTake = () => {
     const { loans, addLoan, markLoanAsPaid, deleteLoan, preferences } = useStore();
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [markPaidConfirm, setMarkPaidConfirm] = useState<{
+        isOpen: boolean;
+        loan: { id: string; personName: string; amount: number } | null;
+    }>({
+        isOpen: false,
+        loan: null,
+    });
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<LoanFormData>({
         defaultValues: {
@@ -31,6 +39,21 @@ export const ToTake = () => {
         });
         reset();
         setIsFormOpen(false);
+    };
+
+    const handleMarkAsPaid = (loan: { id: string; personName: string; amount: number }) => {
+        setMarkPaidConfirm({ isOpen: true, loan });
+    };
+
+    const confirmMarkAsPaid = () => {
+        if (markPaidConfirm.loan) {
+            markLoanAsPaid(markPaidConfirm.loan.id);
+        }
+        setMarkPaidConfirm({ isOpen: false, loan: null });
+    };
+
+    const cancelMarkAsPaid = () => {
+        setMarkPaidConfirm({ isOpen: false, loan: null });
     };
 
     const pendingLoans = loans.filter(l => l.status === 'pending');
@@ -159,11 +182,11 @@ export const ToTake = () => {
                                         <Trash2 className="w-5 h-5" />
                                     </button>
                                     <button
-                                        onClick={() => {
-                                            if (confirm(`Mark ${formatCurrency(loan.amount, preferences.currency)} from ${loan.personName} as received? This will add it to your income.`)) {
-                                                markLoanAsPaid(loan.id);
-                                            }
-                                        }}
+                                        onClick={() => handleMarkAsPaid({
+                                            id: loan.id,
+                                            personName: loan.personName,
+                                            amount: loan.amount
+                                        })}
                                         className="btn btn-primary py-1 px-3 text-sm flex items-center space-x-1"
                                     >
                                         <Check className="w-4 h-4" />
@@ -227,6 +250,19 @@ export const ToTake = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal
+                isOpen={markPaidConfirm.isOpen}
+                title="Mark as Received"
+                message={markPaidConfirm.loan
+                    ? `Mark ${formatCurrency(markPaidConfirm.loan.amount, preferences.currency)} from ${markPaidConfirm.loan.personName} as received? This will add it to your income.`
+                    : ''
+                }
+                confirmText="Mark Received"
+                cancelText="Cancel"
+                onConfirm={confirmMarkAsPaid}
+                onCancel={cancelMarkAsPaid}
+            />
         </div>
     );
 };
